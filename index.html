@@ -294,6 +294,90 @@
 
         </div>
     </main>
+<script>
+        // Cole aqui a URL que você copiou do Google Apps Script
+        const API_URL = "https://script.google.com/macros/s/AKfycbymZyJ4OlSBmlM7jioHCwCkYF3FQYld2GpXwHhxAuMeFxLoQnAqZNL39Fdcy2N7J2eyjQ/exec"; 
+        
+        // Dados simulados do usuário logado (Em breve pegaremos do Login oficial)
+        const usuarioLogado = {
+            nome: "Prof. Cleiton",
+            setor: "pedagogico" // tente mudar para 'meivs' ou 'adm' para testar o bloqueio
+        };
 
+        // Bloqueia as colunas que não pertencem ao setor do usuário
+        function aplicarTravasDeSetor() {
+            const colunas = document.querySelectorAll('.sector-column');
+            colunas.forEach(coluna => {
+                // Pega o nome do setor baseado no cabeçalho da coluna
+                const nomeSetorHeader = coluna.querySelector('.column-header').innerText.toLowerCase();
+                
+                // Mapeia o nome do cabeçalho para o ID do setor
+                let setorId = "";
+                if(nomeSetorHeader.includes("pedago")) setorId = "pedagogico";
+                else if(nomeSetorHeader.includes("meiv")) setorId = "meivs";
+                else if(nomeSetorHeader.includes("adm")) setorId = "adm";
+                else if(nomeSetorHeader.includes("direç")) setorId = "direcao";
+
+                // Se o usuário não for da Direção (Acesso Total) e o setor for diferente do dele, bloqueia
+                if (usuarioLogado.setor !== "direcao" && usuarioLogado.setor !== setorId) {
+                    const textarea = coluna.querySelector('textarea');
+                    const botao = coluna.querySelector('.btn-salvar');
+                    if(textarea) textarea.disabled = true;
+                    if(textarea) textarea.placeholder = "Apenas visualização...";
+                    if(botao) botao.style.display = "none"; // Esconde o botão de salvar
+                }
+            });
+        }
+
+        // Busca os alunos da turma selecionada na Planilha
+        async function carregarAlunosDaTurma(nomeTurma) {
+            const selectAlunos = document.getElementById('select-alunos');
+            selectAlunos.innerHTML = "<option>Carregando estudantes...</option>";
+
+            try {
+                const resposta = await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ acao: "buscarAlunos", turma: nomeTurma })
+                });
+                const alunos = await resposta.json();
+
+                selectAlunos.innerHTML = ""; // Limpa a mensagem de carregando
+                
+                if(alunos.length === 0) {
+                    selectAlunos.innerHTML = "<option>Nenhum aluno ativo encontrado</option>";
+                    return;
+                }
+
+                alunos.forEach(aluno => {
+                    let opt = document.createElement('option');
+                    opt.value = aluno.id;
+                    opt.innerText = aluno.nome;
+                    selectAlunos.appendChild(opt);
+                });
+            } catch (erro) {
+                console.error("Erro ao buscar alunos:", erro);
+                selectAlunos.innerHTML = "<option>Erro ao carregar dados</option>";
+            }
+        }
+
+        // Escuta os cliques no menu lateral de Turmas
+        document.querySelectorAll('.turma-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.turma-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Pega o texto da turma (Ex: "6º Ano A" -> ajusta para buscar "6º A" igual na planilha)
+                const turmaTexto = this.innerText.replace(" Ano", "");
+                carregarAlunosDaTurma(turmaTexto);
+            });
+        });
+
+        // Executa ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            aplicarTravasDeSetor();
+            // Carrega a primeira turma da lista por padrão (6º A)
+            carregarAlunosDaTurma("6º A");
+        });
+    </script>
 </body>
 </html>
