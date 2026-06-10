@@ -206,10 +206,10 @@
             <h2>TURMAS</h2>
         </div>
         <ul class="turmas-lista">
-            <li class="turma-item active"><i class="fa-solid fa-users-viewfinder"></i> 6º Ano A</li>
-            <li class="turma-item"><i class="fa-solid fa-users-viewfinder"></i> 6º Ano B</li>
-            <li class="turma-item"><i class="fa-solid fa-users-viewfinder"></i> 7º Ano A</li>
-            <li class="turma-item"><i class="fa-solid fa-users-viewfinder"></i> 8º Ano A</li>
+            <li class="turma-item active" data-turma="6º A"><i class="fa-solid fa-users-viewfinder"></i> 6º Ano A</li>
+            <li class="turma-item" data-turma="6º B"><i class="fa-solid fa-users-viewfinder"></i> 6º Ano B</li>
+            <li class="turma-item" data-turma="7º A"><i class="fa-solid fa-users-viewfinder"></i> 7º Ano A</li>
+            <li class="turma-item" data-turma="8º A"><i class="fa-solid fa-users-viewfinder"></i> 8º Ano A</li>
         </ul>
     </aside>
 
@@ -219,165 +219,38 @@
             <div class="aluno-selector">
                 <label for="select-alunos"><i class="fa-solid fa-user-graduated"></i> Selecione o Aluno: </label>
                 <select id="select-alunos" style="padding: 6px 12px; font-size: 16px; border-radius: 4px; margin-left: 10px;">
-                    <option>ALICE VICTORIA MARTINS SANTOS</option>
-                    <option>ANA LAURA DE ALMEIDA DELBONE</option>
-                    <option>ARIANE DE JESUS SILVA</option>
+                    <option>Carregando estudantes...</option>
                 </select>
             </div>
-            <div class="user-logged" style="font-size: 14px; font-weight: 600;">
-                <i class="fa-solid fa-user-tie"></i> Prof. Cleiton (Pedagógico)
+            <div class="user-logged" id="label-usuario" style="font-size: 14px; font-weight: 600;">
+                <i class="fa-solid fa-user-tie"></i> Carregando perfil...
             </div>
         </header>
 
         <div class="board-container">
             
-            <section class="sector-column">
+            <section class="sector-column" id="coluna-meivs">
                 <div class="column-header">MEIV'S</div>
-                <div class="feed-container">
-                    <div class="post-card">
-                        <p class="post-text">Estudante participou da oficina de robótica hoje. Demonstrou ótima evolução na montagem dos circuitos com Arduino.</p>
-                        <div class="post-footer">
-                            <span><i class="fa-solid fa-user"></i> Ana Paula</span>
-                            <span>09/06/2026</span>
-                        </div>
-                    </div>
-                </div>
+                <div class="feed-container"></div>
                 <div class="input-container">
                     <textarea placeholder="Digitar informação fixa..."></textarea>
                     <button class="btn-salvar"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
                 </div>
             </section>
 
-            <section class="sector-column">
+            <section class="sector-column" id="coluna-pedagogico">
                 <div class="column-header">PEDAGO</div>
-                <div class="feed-container">
-                    <div class="post-card">
-                        <p class="post-text">Realizado atendimento individualizado para orientação de estudos. Aluna comprometeu-se a entregar as tarefas atrasadas.</p>
-                        <div class="post-footer">
-                            <span><i class="fa-solid fa-user"></i> Profª Maria</span>
-                            <span>08/06/2026</span>
-                        </div>
-                    </div>
-                </div>
+                <div class="feed-container"></div>
                 <div class="input-container">
                     <textarea placeholder="Digitar informação fixa..."></textarea>
                     <button class="btn-salvar"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
                 </div>
             </section>
 
-            <section class="sector-column">
+            <section class="sector-column" id="coluna-adm">
                 <div class="column-header">ADM</div>
-                <div class="feed-container">
-                    <div class="post-card">
-                        <p class="post-text">Histórico escolar do colégio anterior entregue e arquivado na pasta física da secretaria.</p>
-                        <div class="post-footer">
-                            <span><i class="fa-solid fa-user"></i> José R.</span>
-                            <span>05/06/2026</span>
-                        </div>
-                    </div>
-                </div>
+                <div class="feed-container"></div>
                 <div class="input-container">
                     <textarea placeholder="Digitar informação fixa..."></textarea>
                     <button class="btn-salvar"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
                 </div>
-            </section>
-
-            <section class="sector-column direcao">
-                <div class="column-header">DIREÇÃO</div>
-                <div class="feed-container">
-                    </div>
-                <div class="input-container">
-                    <textarea placeholder="Digitar informação fixa..."></textarea>
-                    <button class="btn-salvar"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
-                </div>
-            </section>
-
-        </div>
-    </main>
-<script>
-        // Cole aqui a URL que você copiou do Google Apps Script
-        const API_URL = "https://script.google.com/macros/s/AKfycbymZyJ4OlSBmlM7jioHCwCkYF3FQYld2GpXwHhxAuMeFxLoQnAqZNL39Fdcy2N7J2eyjQ/exec"; 
-        
-        // Dados simulados do usuário logado (Em breve pegaremos do Login oficial)
-        const usuarioLogado = {
-            nome: "Prof. Cleiton",
-            setor: "pedagogico" // tente mudar para 'meivs' ou 'adm' para testar o bloqueio
-        };
-
-        // Bloqueia as colunas que não pertencem ao setor do usuário
-        function aplicarTravasDeSetor() {
-            const colunas = document.querySelectorAll('.sector-column');
-            colunas.forEach(coluna => {
-                // Pega o nome do setor baseado no cabeçalho da coluna
-                const nomeSetorHeader = coluna.querySelector('.column-header').innerText.toLowerCase();
-                
-                // Mapeia o nome do cabeçalho para o ID do setor
-                let setorId = "";
-                if(nomeSetorHeader.includes("pedago")) setorId = "pedagogico";
-                else if(nomeSetorHeader.includes("meiv")) setorId = "meivs";
-                else if(nomeSetorHeader.includes("adm")) setorId = "adm";
-                else if(nomeSetorHeader.includes("direç")) setorId = "direcao";
-
-                // Se o usuário não for da Direção (Acesso Total) e o setor for diferente do dele, bloqueia
-                if (usuarioLogado.setor !== "direcao" && usuarioLogado.setor !== setorId) {
-                    const textarea = coluna.querySelector('textarea');
-                    const botao = coluna.querySelector('.btn-salvar');
-                    if(textarea) textarea.disabled = true;
-                    if(textarea) textarea.placeholder = "Apenas visualização...";
-                    if(botao) botao.style.display = "none"; // Esconde o botão de salvar
-                }
-            });
-        }
-
-        // Busca os alunos da turma selecionada na Planilha
-        async function carregarAlunosDaTurma(nomeTurma) {
-            const selectAlunos = document.getElementById('select-alunos');
-            selectAlunos.innerHTML = "<option>Carregando estudantes...</option>";
-
-            try {
-                const resposta = await fetch(API_URL, {
-                    method: "POST",
-                    body: JSON.stringify({ acao: "buscarAlunos", turma: nomeTurma })
-                });
-                const alunos = await resposta.json();
-
-                selectAlunos.innerHTML = ""; // Limpa a mensagem de carregando
-                
-                if(alunos.length === 0) {
-                    selectAlunos.innerHTML = "<option>Nenhum aluno ativo encontrado</option>";
-                    return;
-                }
-
-                alunos.forEach(aluno => {
-                    let opt = document.createElement('option');
-                    opt.value = aluno.id;
-                    opt.innerText = aluno.nome;
-                    selectAlunos.appendChild(opt);
-                });
-            } catch (erro) {
-                console.error("Erro ao buscar alunos:", erro);
-                selectAlunos.innerHTML = "<option>Erro ao carregar dados</option>";
-            }
-        }
-
-        // Escuta os cliques no menu lateral de Turmas
-        document.querySelectorAll('.turma-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.turma-item').forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Pega o texto da turma (Ex: "6º Ano A" -> ajusta para buscar "6º A" igual na planilha)
-                const turmaTexto = this.innerText.replace(" Ano", "");
-                carregarAlunosDaTurma(turmaTexto);
-            });
-        });
-
-        // Executa ao carregar a página
-        window.addEventListener('DOMContentLoaded', () => {
-            aplicarTravasDeSetor();
-            // Carrega a primeira turma da lista por padrão (6º A)
-            carregarAlunosDaTurma("6º A");
-        });
-    </script>
-</body>
-</html>
